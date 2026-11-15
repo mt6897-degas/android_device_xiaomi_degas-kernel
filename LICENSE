@@ -6,7 +6,7 @@ Copyright is held by Linus Torvalds and the Linux kernel contributors, MediaTek
 Inc., Xiaomi Inc. and Google LLC. None of that code was written here.
 
 The only original work in this repository is two changes to the device tree,
-provided in source form in dts/ - Copyright 2026 Mikhail Mlhcnn, contributed
+retained in reference/lineage-23.2/dts/ - Copyright 2026 Mikhail Mlhcnn, contributed
 under this same license.
 
 Because nothing here is a new program of ours, the appendix at the end of the

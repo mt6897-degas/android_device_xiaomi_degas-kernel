@@ -1,122 +1,74 @@
-# degas-kernel — prebuilt kernel for the Xiaomi 14T (degas)
+# Xiaomi 14T (degas) — PixelOS 17 kernel prebuilts
 
-Prebuilt kernel, loadable modules and base device tree for the Xiaomi 14T
-(`degas`, MediaTek MT6897 / Dimensity 8300-Ultra), used to build LineageOS 23
-for this device.
+Matching stock kernel, DTB, DTBO and loadable modules for the [PixelOS 17 degas device tree](https://github.com/mt6897-degas/android_device_xiaomi_degas/tree/pixelos-17).
 
-Nothing is compiled here. These are binaries taken from the device's own stock
-firmware, plus one device-tree change that is also provided in source form (see
-[Modifications](#modifications-made-here)).
+This branch uses **HyperOS OS3.0.306.0.WNEEUXM**, EEA, Android 16. The active payloads were extracted from the factory firmware and are unchanged. PixelOS packages these prebuilts into its boot and DLKM images. Building the kernel itself requires a separate kernel source checkout.
+
+The original [degas kernel-prebuilt repository](https://github.com/degas-developers/android_device_xiaomi_degas-kernel) was maintained by **[Mikhail Mlhcnn (Advnirr)](https://github.com/Advnirr)** / [Degas Developers](https://github.com/degas-developers). Its history and notices are preserved; the PixelOS branch updates the stock inputs and module layout.
 
 ## Contents
 
-| Path | What it is |
-|---|---|
-| `Image.lz4` | Kernel `6.1.138-android14-11-g44bda9e8f6e9-ab13792638`, built 2025-07-16 by Google's GKI build `ab13792638`. `sha256 618d7723…6191` |
-| `modules/` | 492 loadable modules (`.ko`) |
-| `dtb/mt6897.dtb` | Generic MT6897 SoC device tree, modified here. `sha256 d53811e3…15ba` |
-| `dts/` | Device-tree source: the full source form of the shipped `.dtb`, plus our changes as patches |
-| `kernel-uapi-headers.tar.gz` | UAPI headers matching that kernel |
+| Path | Content |
+| --- | --- |
+| `Image.lz4` | Stock GKI kernel `6.1.157-android14-11-g78a0a76cd7b7-ab15497637` |
+| `dtb/degas.dtb` | Unchanged DTB payload from factory `vendor_boot.img` |
+| `dtbo.img` | Complete factory DTBO partition image, 8,388,608 bytes |
+| `modules/system/` | 60 modules from `system_dlkm` |
+| `modules/vendor/` | 241 modules from `vendor_dlkm` |
+| `modules/vendor_ramdisk/` | 215 platform vendor-ramdisk modules |
+| `stock-kernel.lock.json` | SHA256 hashes for all 519 active payload files |
+| `reference/lineage-23.2/` | Original DTS, thermal patches, modified DTB and UAPI headers for the older Lineage stock kernel; retained for reference |
 
-The device-specific device tree isn't here. On MediaTek platforms it lives in
-the `dtbo` partition, which this tree doesn't build or replace, so the device
-keeps its stock `dtbo` and it gets overlaid onto `mt6897.dtb` at boot.
+The kernel's embedded build date is May 26, 2026. The directory split preserves distinct factory versions of zram and zsmalloc. Module contents and signatures must be preserved during packaging.
 
-## Provenance
+The `.dtb` filename is required by Android's prebuilt DTB rule. Place only the active `degas.dtb` in the consumed `dtb/` directory; the original modified `mt6897.dtb` is stored under `reference/` and is not selected by the PixelOS device tree. Its legacy thermal changes are not applied to the current stock DTB. The older UAPI header archive is also reference material for the older kernel.
 
-Everything binary here comes from the stock HyperOS firmware for degas, build
-OS3.0.4.0.WNEMIXM (global, Android 16), and can be checked against Xiaomi's own
-fastboot package.
+## Use with PixelOS
 
-`Image.lz4` is byte-identical to the kernel inside the stock `boot.img`:
+From the Android checkout root:
 
-```sh
-# kernel size is a LE u32 at offset 8; payload starts at page 1 (4096)
-ksize=$(od -An -tu4 -j8 -N4 boot.img | tr -d ' ')
-dd if=boot.img of=stock-kernel.bin bs=4096 skip=1 count=$(( (ksize+4095)/4096 )) 2>/dev/null
-head -c "$ksize" stock-kernel.bin | cmp - Image.lz4   # no output = identical
+```bash
+git clone -b pixelos-17 https://github.com/mt6897-degas/android_device_xiaomi_degas-kernel.git device/xiaomi/degas-kernel
+python3 device/xiaomi/degas/tools/validate-tree.py
 ```
 
-Of the 492 modules, 301 are byte-identical to the ones in the stock
-`vendor_dlkm` and `system_dlkm` images of that build, and the other 191 to the
-modules in the stock `vendor_boot` ramdisk — exactly the
-`vendor_ramdisk.modules.load` set. None was built, patched or re-signed here;
-there is no kernel build infrastructure in this repository at all.
+Use the sibling device tree's `pixelos-17` branch. Its `BoardConfig.mk` selects `Image.lz4`, `dtb/degas.dtb`, `dtbo.img` and the partition-specific module directories. Kernel prebuilts need no standalone Android makefile because those paths are consumed directly by the device configuration.
 
-`dtb/mt6897.dtb` started as the device tree from the stock `vendor_boot` image
-and carries the two changes described below.
+The initial PixelOS 17 build included these exact kernel and DTB payloads. Device boot with SELinux enforcing and later fixes has been checked. No custom kernel was compiled for this port, and comprehensive hardware, suspend and battery testing remains incomplete.
 
-## License
+## Reproduce from stock firmware
 
-The kernel, the modules and the device tree are under the GNU General Public
-License version 2 (see `LICENSE`); copyright is held by the Linux kernel
-contributors, MediaTek Inc., Xiaomi Inc. and Google LLC. We license nothing
-here ourselves — this is vendor binaries redistributed unmodified plus one
-modified device tree, all under the GPL-2.0 they already carry.
+Use the matching OS3.0.306.0.WNEEUXM fastboot package, `fsck.erofs`, `lz4`, and the sibling device tree's preparation tool. Choose new output directories:
 
-Flashing software built with this can leave a device unbootable. Sections 11
-and 12 of the GPL-2.0 in `LICENSE` apply.
-
-### Where the corresponding source is
-
-Xiaomi publishes part of it, on branch `bsp-degas-u-oss`:
-
-* [`MiCode/Xiaomi_Kernel_OpenSource`](https://github.com/MiCode/Xiaomi_Kernel_OpenSource) — the GKI core
-* [`MiCode/MTK_kernel_modules`](https://github.com/MiCode/MTK_kernel_modules) — connectivity (wlan `gen4m`, GPS, BT)
-* [`MiCode/kernel_build`](https://github.com/MiCode/kernel_build) — the kleaf/bazel build harness
-
-The GKI binary itself is Google's: kernel `android14-6.1`, build
-`ab13792638`, source at
-[android.googlesource.com/kernel/common](https://android.googlesource.com/kernel/common/+/refs/heads/android14-6.1).
-
-### What Xiaomi hasn't published
-
-`MiCode/MTK_kernel_device_modules` has no degas branch, so the MediaTek
-`mediatek_v2` DRM stack, `mi_disp` and the degas panel drivers have no
-published source anywhere. Those modules are redistributed here exactly as
-Xiaomi shipped them on the device. We hold no source for them; it has to come
-from Xiaomi Inc., who distributed the binaries first.
-
-### Written offer
-
-For any binary here that we hold corresponding source for, open an issue and
-we'll provide it. For the one file we modified, the source is already in this
-repository, under `dts/`.
-
-If you hold rights to something here and it shouldn't be redistributed, open an
-issue and it'll be taken down.
-
-## Modifications made here
-
-One file has been modified: `dtb/mt6897.dtb`, in two commits, both done as a
-`dtc` round-trip on the stock device tree.
-
-1. **GPU thermal backstop.** Thermal zones `gpu1`/`gpu2` shipped with a single
-   critical trip at 119 °C and no cooling maps, because Xiaomi delegates GPU
-   thermal policy to `mi_thermald`, which doesn't run on LineageOS. Adds a
-   passive trip at 105 °C mapped onto the Mali cooling device.
-2. **CPU thermal backstop.** Adds `#cooling-cells` to the three cluster leaders
-   (`cpu0`, `cpu4`, `cpu7`) so `mediatek-cpufreq-hw` registers cpufreq cooling
-   devices, and a passive trip at 100 °C per hot-core zone. Without it nothing
-   regulated the CPU between 88 °C under load and the 119 °C emergency
-   shutdown.
-
-Both keep `polling-delay = 0`, leave `__symbols__` byte-identical and move no
-pre-existing phandle. That last part matters: the stock `dtbo` is overlaid onto
-this device tree at boot and resolves against them.
-
-### Source form, and how to verify it
-
-`dts/mt6897.dts` is the complete device-tree source of the shipped `.dtb`, and
-`dts/patches/` holds the two changes as patches against the stock base.
-
-```sh
-# the shipped binary is reproducible from the source in this repo, byte for byte
-dtc -I dts -O dtb -f -o /tmp/mt6897.dtb dts/mt6897.dts   # dtc 1.8.1
-cmp /tmp/mt6897.dtb dtb/mt6897.dtb                       # no output = identical
-
-# and reverse-applying both patches gives back the unmodified stock device tree
-cp dts/mt6897.dts /tmp/stock.dts
-patch -R -p1 /tmp/stock.dts < dts/patches/0002-cpu-thermal-backstop.patch
-patch -R -p1 /tmp/stock.dts < dts/patches/0001-gpu-thermal-backstop.patch
+```bash
+python3 device/xiaomi/degas/tools/prepare-stock.py \
+    /absolute/path/to/degas_eea_global_images_OS3.0.306.0.WNEEUXM_16.0 \
+    --work "$PWD/stock/degas-verification" \
+    --kernel "$PWD/stock/degas-kernel-verification"
 ```
+
+The tool extracts the matching boot/vendor_boot payloads and platform modules, preserving their partition layout and recording their hashes. The generated active payloads should match `stock-kernel.lock.json` in this branch.
+
+## Verify payload hashes
+
+From this repository root:
+
+```bash
+python3 - <<'PY'
+import hashlib, json
+from pathlib import Path
+root = Path('.')
+lock = json.loads((root / 'stock-kernel.lock.json').read_text())
+for name, expected in lock['files'].items():
+    assert hashlib.sha256((root / name).read_bytes()).hexdigest() == expected, name
+print(f"Verified {len(lock['files'])} factory payloads")
+PY
+```
+
+The sibling device tree's validator additionally checks the DT table/FDT layout, module-load lists and required vendor modules. Retain matching kernel/modules/DTB/DTBO together when updating the stock base.
+
+## License and source references
+
+Original copyright and licensing notices are retained in [LICENSE](LICENSE). The Linux kernel contributors, Google, Xiaomi and MediaTek retain ownership of the factory binaries. Mikhail Mlhcnn's original DTS changes remain available under `reference/lineage-23.2/dts/` and in the upstream history.
+
+Kernel source references: [Android common kernel, android14-6.1](https://android.googlesource.com/kernel/common/+/refs/heads/android14-6.1), [MiCode/Xiaomi_Kernel_OpenSource](https://github.com/MiCode/Xiaomi_Kernel_OpenSource), [MiCode/MTK_kernel_modules](https://github.com/MiCode/MTK_kernel_modules) and [MiCode/kernel_build](https://github.com/MiCode/kernel_build). This repository contains factory prebuilts and reference material; it is not a complete kernel source release.
