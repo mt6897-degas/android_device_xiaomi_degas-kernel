@@ -1,0 +1,53 @@
+{
+  "source_pins": {
+    "mtk_charger_framework.ko": "da5a3a940f235597c63c034d890c722af5361b94ba179d0af4dd818212221df5",
+    "mtk_pd_adapter.ko": "23a87931cfae7a60a6dd092595d3ef7e520a2bac860cdfe3626c7b5c542df6de",
+    "tcpc_class.ko": "7ff3a82d0bed63f5837ab0a5dff90cf4c3b2fa94986f4d348d838a1a1f54e65e"
+  },
+  "output_sha256": "cc6ecd15cc18b171df36c3d2f09a413e80a8f5dd38497f56fa0dbb469581ec99",
+  "output_bytes": 558504,
+  "hook_text_offset": 84532,
+  "hook_original_file_offset": 104900,
+  "helper_text_offset": 128140,
+  "wrapper_text_offset": 128844,
+  "original_text_bytes": 128140,
+  "changed_original_text_bytes": 4,
+  "added_text_bytes": 876,
+  "changed_sections": [
+    ".note.gnu.build-id",
+    ".rela.text",
+    ".strtab",
+    ".symtab",
+    ".text",
+    "__versions"
+  ],
+  "new_import": "tcpm_inquire_pd_contract",
+  "new_import_crc_le": "fbb62ab5",
+  "module_signature_present": false,
+  "existing_symbol_indices_and_records_preserved": true,
+  "existing_relocations_preserved": true,
+  "existing_import_crcs_preserved": true,
+  "existing_exports_modinfo_cfi_alternatives_preserved": true,
+  "helper_compiler_flags": [
+    "--target=aarch64-linux-gnu",
+    "-O2",
+    "-ffreestanding",
+    "-fno-builtin",
+    "-fno-strict-aliasing",
+    "-mgeneral-regs-only",
+    "-ffixed-x18",
+    "-fsanitize=shadow-call-stack",
+    "-mbranch-protection=pac-ret",
+    "-fstack-protector-strong",
+    "-mstack-protector-guard=sysreg",
+    "-mstack-protector-guard-reg=sp_el0",
+    "-mstack-protector-guard-offset=1592",
+    "-fno-unwind-tables",
+    "-fno-asynchronous-unwind-tables",
+    "-fno-addrsig",
+    "-Wall",
+    "-Wextra",
+    "-Werror"
+  ],
+  "runtime_verified": false
+}

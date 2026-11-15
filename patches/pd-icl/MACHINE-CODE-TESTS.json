@@ -1,0 +1,14 @@
+{
+  "module_sha256": "cc6ecd15cc18b171df36c3d2f09a413e80a8f5dd38497f56fa0dbb469581ec99",
+  "machine_code_cases": 644,
+  "all_passed": true,
+  "all_x0_x30_sp_nzcv_simd_fpcr_fpsr_preserved_except_w8": true,
+  "shadow_call_stack_balanced": true,
+  "stack_canary_tamper": {
+    "canary_failure_traps": true
+  },
+  "selected_pdo_and_explicit_contract_both_limit_icl": true,
+  "pd_authentication_thermal_pumps_unmodified": true,
+  "pac_instructions_preserved_but_hardware_pac_not_verified": true,
+  "kernel_module_loader_boot_and_real_charging_verified": false
+}

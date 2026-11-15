@@ -66,7 +66,7 @@
     "modules/vendor_ramdisk/slbc_ipi.ko": "920cd9babd0eacc1512418e713a3cc6212265ea39799c37202b00df83352366c",
     "modules/vendor_ramdisk/crash_module.ko": "987d4c9950cb8cc658d5ad893f2a404a4987285608d3a58b01847bda0be0c878",
     "modules/vendor_ramdisk/uarthub_drv.ko": "2d2edf3822678d5459d9d5bc61413b2e29ce788d4f747819e5115b8fb7771674",
-    "modules/vendor_ramdisk/mtk_charger_framework.ko": "da5a3a940f235597c63c034d890c722af5361b94ba179d0af4dd818212221df5",
+    "modules/vendor_ramdisk/mtk_charger_framework.ko": "cc6ecd15cc18b171df36c3d2f09a413e80a8f5dd38497f56fa0dbb469581ec99",
     "modules/vendor_ramdisk/aee_aed.ko": "980700f0103ef63ad1677b57e4bfb8b791b76965cc62c7bc08ca360f9dd508a0",
     "modules/vendor_ramdisk/rt4831a_drv.ko": "a4d882421094080da0e33ba215d5855ab46d2bd05348cbb9edbc56b2b564efd1",
     "modules/vendor_ramdisk/clk-mt6897-bus.ko": "8036af55dbb1ead291784c5b426df99bb51a3a0dea11e81bce12fc50c3f9da7e",
@@ -521,5 +521,14 @@
     "modules/vendor/spmi-mtk-mpu.ko": "60853130939c834335d302a23ecc8b2df8a9b3a5b7eab43b3e0801e3c5924667",
     "modules/vendor/imgsensor-glue.ko": "89527f5c345e0e628fac9c895d5059f214f1bd5efeac62ae89fdf4cbd89e97cf",
     "dtb/degas.dtb": "ce9fa587134c770e4d3bbe576fe29a5ec89c795789bf8830c0179525625d79cf"
+  },
+  "patches": {
+    "modules/vendor_ramdisk/mtk_charger_framework.ko": {
+      "name": "fixed PD selected PDO and explicit-contract ICL",
+      "factory_sha256": "da5a3a940f235597c63c034d890c722af5361b94ba179d0af4dd818212221df5",
+      "source": "patches/pd-icl",
+      "machine_code_verified": true,
+      "hardware_verified": false
+    }
   }
 }
