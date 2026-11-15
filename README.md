@@ -1,10 +1,10 @@
-# Xiaomi 14T (degas) — PixelOS 17 kernel prebuilts
+# Xiaomi 14T (degas) — LineageOS 24.0 kernel prebuilts
 
-Matching stock kernel, DTB, DTBO and loadable modules for the [PixelOS 17 degas device tree](https://github.com/mt6897-degas/android_device_xiaomi_degas/tree/pixelos-17).
+Matching stock kernel, DTB, DTBO and loadable modules for the [LineageOS 24.0 degas device tree](https://github.com/mt6897-degas/android_device_xiaomi_degas/tree/lineage-24.0).
 
-This branch uses **HyperOS OS3.0.306.0.WNEEUXM**, EEA, Android 16. The active payloads were extracted from the factory firmware and are unchanged. PixelOS packages these prebuilts into its boot and DLKM images. Building the kernel itself requires a separate kernel source checkout.
+This branch uses **HyperOS OS3.0.306.0.WNEEUXM**, EEA, Android 16. The active payloads were extracted from the factory firmware and are unchanged. LineageOS packages these prebuilts into its boot and DLKM images. Building the kernel itself requires a separate kernel source checkout.
 
-The original [degas kernel-prebuilt repository](https://github.com/degas-developers/android_device_xiaomi_degas-kernel) was maintained by **[Mikhail Mlhcnn (Advnirr)](https://github.com/Advnirr)** / [Degas Developers](https://github.com/degas-developers). Its history and notices are preserved; the PixelOS branch updates the stock inputs and module layout.
+The original [degas kernel-prebuilt repository](https://github.com/degas-developers/android_device_xiaomi_degas-kernel) was maintained by **[Mikhail Mlhcnn (Advnirr)](https://github.com/Advnirr)** / [Degas Developers](https://github.com/degas-developers). Its history and notices are preserved; the preceding PixelOS branch updated the stock inputs and module layout, which this branch preserves.
 
 ## Contents
 
@@ -21,20 +21,20 @@ The original [degas kernel-prebuilt repository](https://github.com/degas-develop
 
 The kernel's embedded build date is May 26, 2026. The directory split preserves distinct factory versions of zram and zsmalloc. Module contents and signatures must be preserved during packaging.
 
-The `.dtb` filename is required by Android's prebuilt DTB rule. Place only the active `degas.dtb` in the consumed `dtb/` directory; the original modified `mt6897.dtb` is stored under `reference/` and is not selected by the PixelOS device tree. Its legacy thermal changes are not applied to the current stock DTB. The older UAPI header archive is also reference material for the older kernel.
+The `.dtb` filename is required by Android's prebuilt DTB rule. Place only the active `degas.dtb` in the consumed `dtb/` directory; the original modified `mt6897.dtb` is stored under `reference/` and is not selected by the device tree. Its legacy thermal changes are not applied to the current stock DTB. The older UAPI header archive is also reference material for the older kernel.
 
-## Use with PixelOS
+## Use with LineageOS 24.0
 
 From the Android checkout root:
 
 ```bash
-git clone -b pixelos-17 https://github.com/mt6897-degas/android_device_xiaomi_degas-kernel.git device/xiaomi/degas-kernel
+git clone -b lineage-24.0 https://github.com/mt6897-degas/android_device_xiaomi_degas-kernel.git device/xiaomi/degas-kernel
 python3 device/xiaomi/degas/tools/validate-tree.py
 ```
 
-Use the sibling device tree's `pixelos-17` branch. Its `BoardConfig.mk` selects `Image.lz4`, `dtb/degas.dtb`, `dtbo.img` and the partition-specific module directories. Kernel prebuilts need no standalone Android makefile because those paths are consumed directly by the device configuration.
+Use the sibling device tree's `lineage-24.0` branch. Its `BoardConfig.mk` selects `Image.lz4`, `dtb/degas.dtb`, `dtbo.img` and the partition-specific module directories. Kernel prebuilts need no standalone Android makefile because those paths are consumed directly by the device configuration.
 
-The initial PixelOS 17 build included these exact kernel and DTB payloads. Device boot with SELinux enforcing and later fixes has been checked. No custom kernel was compiled for this port, and comprehensive hardware, suspend and battery testing remains incomplete.
+The prior PixelOS 17 build used these exact kernel and DTB payloads and booted with SELinux enforcing. This LineageOS 24.0 branch reuses all 519 payloads byte-for-byte; only repository documentation changes. Hashes and device module-load paths have been checked. A full LineageOS build and device boot have not been verified. No custom kernel was compiled, and comprehensive hardware, suspend and battery testing remains incomplete.
 
 ## Reproduce from stock firmware
 
